@@ -14,6 +14,19 @@ impl JiraDatabase {
     pub fn read_db(&self) -> Result<DataBaseState> {
         self.database.read_db()
     }
+
+    pub fn create_epic(&self, epic: Epic) -> Result<u32> {
+        let mut parsed = self.database.read_db()?;
+
+        let last_id = parsed.last_item_id;
+        let new_id = last_id + 1;
+
+        parsed.last_item_id = new_id;
+        parsed.epics.insert(new_id, epic);
+
+        self.database.write_db(&parsed)?;
+        Ok(new_id)
+    }
 }
 
 trait Database {
