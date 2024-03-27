@@ -10,13 +10,18 @@ pub enum Status {
 pub struct Epic {
     pub name: String,
     pub description: String,
-    pub Status: Status,
+    pub status: Status,
     pub stories: Vec<u32>
 }
 
 impl Epic {
     pub fn new(name: String, description: String) -> Self {
-        todo!()
+        Self {
+            name, 
+            description,
+            status: Status::Open,
+            stories: vec![]
+        }
     }
 }
 
@@ -28,7 +33,11 @@ pub struct Story {
 
 impl Story {
     pub fn new(name: String, description: String) -> Self {
-        todo!()
+        Self {
+            name,
+            description,
+            status: Status::Open
+        }
     }
 }
 
