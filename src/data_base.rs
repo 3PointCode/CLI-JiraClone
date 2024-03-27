@@ -1,8 +1,20 @@
 use std::fs;
-
 use anyhow::{Ok, Result};
-
 use crate::models::{DataBaseState, Epic, Story, Status};
+
+pub struct JiraDatabase {
+    database: Box<dyn Database>
+}
+
+impl JiraDatabase {
+    pub fn new(file_path: String) -> Self {
+        Self { database: Box::new(JSONFileDatabase { file_path }) }
+    }
+
+    pub fn read_db(&self) -> Result<DataBaseState> {
+        self.database.read_db()
+    }
+}
 
 trait Database {
     fn read_db(&self) -> Result<DataBaseState>;
