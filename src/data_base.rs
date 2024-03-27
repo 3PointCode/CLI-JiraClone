@@ -44,6 +44,21 @@ impl JiraDatabase {
         self.database.write_db(&parsed)?;
         Ok(new_id)
     }
+
+    pub fn delete_epic(&self, epic_id: u32) -> Result<()> {
+        let mut parsed = self.database.read_db()?;
+
+        for story_id in &parsed.epics
+                .get(&epic_id).ok_or_else(|| anyhow!("Could not find epic in database!"))?
+                .stories {
+            parsed.stories.remove(&epic_id);
+        }
+
+        parsed.epics.remove(&epic_id);
+
+        self.database.write_db(&parsed)?;
+        Ok(())
+    }
 }
 
 trait Database {
