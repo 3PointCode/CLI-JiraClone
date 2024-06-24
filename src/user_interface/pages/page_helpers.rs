@@ -27,7 +27,7 @@ pub fn get_column_string(text: &str, width: usize) -> String {
             }
 
             let result = text.truncate_ellipse(width - 3);
-            result.to_string();
+            result.to_string()
         },
     }
 }
