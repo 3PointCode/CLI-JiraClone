@@ -106,10 +106,26 @@ impl Page for EpicDetail {
     }
 
     fn handle_input(&self, input: &str) -> Result<Option<Action>> {
-        
+        let db_state = self.db.read_db()?;
+        let stories = db_state.stories;
+
+        match input {
+            "p" => Ok(Some(Action::NavigateToPreviousPage)),
+            "u" => Ok(Some(Action::UpdateEpicStatus { epic_id: self.epic_id })),
+            "d" => Ok(Some(Action::DeleteEpic { epic_id: self.epic_id })),
+            "c" => Ok(Some(Action::CreateStory { epic_id: self.epic_id })),
+            input => {
+                if let Ok(story_id) = input.parse::<u32>() {
+                    if stories.contains_key(&story_id) {
+                        return Ok(Some(Action::NavigateToStoryDetail { epic_id: self.epic_id, story_id }));
+                    }
+                }
+                Ok(None)
+            }
+        }
     }
 
     fn as_any(&self) -> &dyn Any {
-        
+        self
     }
 }
