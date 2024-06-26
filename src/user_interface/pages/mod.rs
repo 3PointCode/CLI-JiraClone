@@ -173,3 +173,54 @@ impl Page for StoryDetail {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{data_base::test_utils::MockDatabase};
+    use crate::models::{Epic, Story};
+
+    mod home_page {
+        use super::*;
+
+        #[test]
+        fn draw_page_should_not_throw_error() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let page = HomePage { db };
+
+            assert_eq!(page.draw_page().is_ok(), true);
+        }
+
+        #[test]
+        fn handle_input_should_not_throw_error() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let page = HomePage { db };
+
+            assert_eq!(page.handle_input("").is_ok(), true);
+        }
+
+        #[test]
+        fn handle_input_should_return_the_correct_actions() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let epic = Epic::new("".to_owned(), "".to_owned());
+            let epic_id = db.create_epic(epic).unwrap();
+            let page = HomePage { db };
+
+            let q = "q";
+            let c = "c";
+            let valid_epic_id = epic_id.to_string();
+            let invalid_epic_id = "110101";
+            let wrong_input = "j124skf";
+            let wrong_input_with_valid_prefix = "q192ekd";
+            let input_with_trailing_whitespaces = "q\n";
+
+            assert_eq!(page.handle_input(q).unwrap(), Some(Action::Exit));
+            assert_eq!(page.handle_input(c).unwrap(), Some(Action::CreateEpic));
+            assert_eq!(page.handle_input(&valid_epic_id).unwrap(), Some(Action::NavigateToEpicDetail { epic_id: 1 }));
+            assert_eq!(page.handle_input(invalid_epic_id).unwrap(), None);
+            assert_eq!(page.handle_input(wrong_input).unwrap(), None);
+            assert_eq!(page.handle_input(wrong_input_with_valid_prefix).unwrap(), None);
+            assert_eq!(page.handle_input(input_with_trailing_whitespaces).unwrap(), None);
+        }
+    }
+}
