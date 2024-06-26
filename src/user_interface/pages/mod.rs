@@ -63,3 +63,53 @@ impl Page for HomePage {
         self
     }
 }
+
+pub struct EpicDetail {
+    pub epic_id: u32,
+    pub db: Rc<JiraDatabase>
+}
+
+impl Page for EpicDetail {
+    fn draw_page(&self) -> Result<()> {
+        let db_state = self.db.read_db()?;
+        let epic = db_state.epics.get(&self.epic_id).ok_or_else(|| anyhow!("Could not find epic!"))?;
+
+        println!("------------------------------ EPIC ------------------------------");
+        println!("  id  |     name     |         description         |    status    ");
+
+        let id_col = get_column_string(&self.epic_id.to_string(), 5);
+        let name_col = get_column_string(&epic.name, 12);
+        let desc_col = get_column_string(&epic.description, 27);
+        let status_col = get_column_string(&epic.status.to_string(), 13);
+        println!("{} | {} | {} | {}", id_col, name_col, desc_col, status_col);
+        println!();
+
+        println!("---------------------------- STORIES ----------------------------");
+        println!("     id     |               name               |      status      ");
+
+        let stories = &db_state.stories;
+
+        for id in epic.stories.iter().sorted() {
+            let story = &stories[id];
+            let id_col = get_column_string(&id.to_string(), 11);
+            let name_col = get_column_string(&story.name, 32);
+            let status_col = get_column_string(&story.status.to_string(), 17);
+            println!("{} | {} | {}", id_col, name_col, status_col);
+        }
+
+        println!();
+        println!();
+
+        println!("[p] previous | [u] update epic | [d] delete epic | [c] create story | [:id:] navigate to story");
+
+        Ok(())
+    }
+
+    fn handle_input(&self, input: &str) -> Result<Option<Action>> {
+        
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        
+    }
+}
