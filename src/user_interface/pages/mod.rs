@@ -177,7 +177,7 @@ impl Page for StoryDetail {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{data_base::test_utils::MockDatabase};
+    use crate::data_base::test_utils::MockDatabase;
     use crate::models::{Epic, Story};
 
     mod home_page {
