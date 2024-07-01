@@ -223,4 +223,63 @@ mod tests {
             assert_eq!(page.handle_input(input_with_trailing_whitespaces).unwrap(), None);
         }
     }
+
+    mod epic_detail_page {
+        use super::*;
+
+        #[test]
+        fn draw_page_should_not_throw_error() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+
+            let page = EpicDetail { epic_id, db };
+            assert_eq!(page.draw_page().is_ok(), true);
+        }
+
+        #[test]
+        fn handle_input_should_not_throw_error() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+
+            let page = EpicDetail { epic_id, db };
+            assert_eq!(page.handle_input("").is_ok(), true);
+        }
+
+        #[test]
+        fn draw_page_should_throw_error_for_invalid_epic_id() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+
+            let page = EpicDetail { epic_id: 999, db };
+            assert_eq!(page.draw_page().is_err(), true);
+        }
+
+        #[test]
+        fn handle_input_should_return_the_correct_actions() {
+            let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+            let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+            let story_id = db.create_story(Story::new("".to_owned(), "".to_owned()), epic_id).unwrap();
+
+            let page = EpicDetail { epic_id, db };
+            let p = "p";
+            let u = "u";
+            let d = "d";
+            let c = "c";
+            let invalid_story_id = "3213";
+            let wrong_input = "j124skf";
+            let wrong_input_with_valid_prefix = "q192ekd";
+            let input_with_trailing_whitespaces = "q\n";
+
+            assert_eq!(page.handle_input(p).unwrap(), Some(Action::NavigateToPreviousPage));
+            assert_eq!(page.handle_input(u).unwrap(), Some(Action::UpdateEpicStatus { epic_id: 1 }));
+            assert_eq!(page.handle_input(d).unwrap(), Some(Action::DeleteEpic { epic_id: 1 }));
+            assert_eq!(page.handle_input(c).unwrap(), Some(Action::CreateStory { epic_id: 1 }));
+            assert_eq!(page.handle_input(&story_id.to_string()).unwrap(), Some(Action::NavigateToStoryDetail { epic_id: 1, story_id: 2 }));
+            assert_eq!(page.handle_input(invalid_story_id).unwrap(), None);
+            assert_eq!(page.handle_input(wrong_input).unwrap(), None);
+            assert_eq!(page.handle_input(wrong_input_with_valid_prefix).unwrap(), None);
+            assert_eq!(page.handle_input(input_with_trailing_whitespaces).unwrap(), None);
+        }
+    }
+
+    
 }
