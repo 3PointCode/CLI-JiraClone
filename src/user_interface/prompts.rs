@@ -19,3 +19,18 @@ impl Prompts {
         }
     }
 }
+
+fn create_epic_prompt() -> Epic {
+    println!("----------------------------");
+    println!("Epic Name: ");
+
+    let epic_name = get_user_input();
+
+    println!("Epic Description: ");
+
+    let epic_desc = get_user_input();
+    let epic = Epic::new(epic_name.trim().to_owned(), epic_desc.trim().to_owned());
+
+    epic
+}
+
