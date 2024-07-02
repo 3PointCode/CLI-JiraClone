@@ -100,4 +100,45 @@ mod tests {
 
         assert_eq!(home_page.is_some(), true);
     }
+
+    fn handle_action_should_navigate_pages() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let mut nav = Navigator::new(db);
+
+        nav.handle_action(Action::NavigateToEpicDetail { epic_id: 1 }).unwrap();
+        assert_eq!(nav.get_page_count(), 2);
+
+        let current_page = nav.get_current_page().unwrap();
+        let epic_detail_page = current_page.as_any().downcast_ref::<EpicDetail>();
+        assert_eq!(epic_detail_page.is_some(), true);
+
+        nav.handle_action(Action::NavigateToStoryDetail { epic_id: 1, story_id: 2 }).unwrap();
+        assert_eq!(nav.get_page_count(), 3);
+
+        let current_page = nav.get_current_page().unwrap();
+        let story_detail_page = current_page.as_any().downcast_ref::<StoryDetail>();
+        assert_eq!(story_detail_page.is_some(), true);
+
+        nav.handle_action(Action::NavigateToPreviousPage).unwrap();
+        assert_eq!(nav.get_page_count(), 2);
+
+        let current_page = nav.get_current_page().unwrap();
+        let epic_detail_page = current_page.as_any().downcast_ref::<EpicDetail>();
+        assert_eq!(epic_detail_page.is_some(), true);
+
+        nav.handle_action(Action::NavigateToPreviousPage).unwrap();
+        assert_eq!(nav.get_page_count(), 1);
+
+        let current_page = nav.get_current_page().unwrap();
+        let home_page = current_page.as_any().downcast_ref::<HomePage>();
+        assert_eq!(home_page.is_some(), true);
+
+        nav.handle_action(Action::NavigateToPreviousPage).unwrap();
+        assert_eq!(nav.get_page_count(), 0);
+
+        nav.handle_action(Action::NavigateToPreviousPage).unwrap();
+        assert_eq!(nav.get_page_count(), 0);
+    }
+
+    
 }
