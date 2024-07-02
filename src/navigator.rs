@@ -15,4 +15,12 @@ impl Navigator {
     pub fn get_current_page(&self) -> Option<&Box<dyn Page>> {
         self.pages.last()
     }
+
+    fn get_page_count(&self) -> usize {
+        self.pages.len()
+    }
+
+    fn set_prompts(&mut self, prompts: Prompts) {
+        self.prompts = prompts;
+    }
 }
