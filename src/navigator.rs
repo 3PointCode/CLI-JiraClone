@@ -171,5 +171,18 @@ mod tests {
         assert_eq!(epic.description, "description".to_owned());
     }
 
-    
+    #[test]
+    fn handle_action_should_handle_update_epic() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.update_status = Box::new(|| Some(Status::InProgress));
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::UpdateEpicStatus { epic_id }).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.epics.get(&epic_id).unwrap().status, Status::InProgress);
+    }
 }
