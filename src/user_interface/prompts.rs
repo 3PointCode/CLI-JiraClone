@@ -34,3 +34,18 @@ fn create_epic_prompt() -> Epic {
     epic
 }
 
+fn create_story_prompt() -> Story {
+    println!("----------------------------");
+    println!("Story Name: ");
+
+    let story_name = get_user_input();
+
+    println!("Story Description: ");
+
+    let story_desc = get_user_input();
+
+    let story = Story::new(story_name.trim().to_owned(), story_desc.trim().to_owned());
+
+    story
+}
+
