@@ -12,5 +12,7 @@ impl Navigator {
         Self { pages: vec![Box::new(HomePage { db: Rc::clone(&db)})], prompts: Prompts::new(), db }
     }
 
-    
+    pub fn get_current_page(&self) -> Option<&Box<dyn Page>> {
+        self.pages.last()
+    }
 }
