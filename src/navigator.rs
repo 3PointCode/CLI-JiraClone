@@ -155,6 +155,21 @@ mod tests {
 
     #[test]
     fn handle_action_should_handle_create_epic() {
-        
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.create_epic = Box::new(|| Epic::new("name".to_owned(), "description".to_owned()));
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::CreateEpic).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.epics.len(), 1);
+
+        let epic = db_state.epics.into_iter().next().unwrap().1;
+        assert_eq!(epic.name, "name".to_owned());
+        assert_eq!(epic.description, "description".to_owned());
     }
+
+    
 }
