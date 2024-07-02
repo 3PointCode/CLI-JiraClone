@@ -1,4 +1,5 @@
-use crate::{models::{Epic, Story, Status}, io_utils::get_user_input};
+use crate::models::{Epic, Story, Status};
+use crate::io_utils::get_user_input;
 
 pub struct Prompts {
     pub create_epic: Box<dyn Fn() -> Epic>,
