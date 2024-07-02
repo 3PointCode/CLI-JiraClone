@@ -7,3 +7,10 @@ pub struct Navigator {
     db: Rc<JiraDatabase>
 }
 
+impl Navigator {
+    pub fn new(db: Rc<JiraDatabase>) -> Self {
+        Self { pages: vec![Box::new(HomePage { db: Rc::clone(&db)})], prompts: Prompts::new(), db }
+    }
+
+    
+}
