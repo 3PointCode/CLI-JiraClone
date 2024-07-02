@@ -185,4 +185,19 @@ mod tests {
         let db_state = db.read_db().unwrap();
         assert_eq!(db_state.epics.get(&epic_id).unwrap().status, Status::InProgress);
     }
+
+    #[test]
+    fn handle_action_should_handle_delete_epic() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.delete_epic = Box::new(|| true);
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::DeleteEpic { epic_id }).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.epics.len(), 0);
+    }
 }
