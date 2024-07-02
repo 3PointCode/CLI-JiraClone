@@ -101,6 +101,7 @@ mod tests {
         assert_eq!(home_page.is_some(), true);
     }
 
+    #[test]
     fn handle_action_should_navigate_pages() {
         let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
         let mut nav = Navigator::new(db);
@@ -140,5 +141,20 @@ mod tests {
         assert_eq!(nav.get_page_count(), 0);
     }
 
-    
+    #[test]
+    fn handle_action_should_clear_pages_on_exit() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let mut nav = Navigator::new(db);
+
+        nav.handle_action(Action::NavigateToEpicDetail { epic_id: 1 }).unwrap();
+        nav.handle_action(Action::NavigateToStoryDetail { epic_id: 1, story_id: 2 }).unwrap();
+        nav.handle_action(Action::Exit).unwrap();
+
+        assert_eq!(nav.get_page_count(), 0);
+    }
+
+    #[test]
+    fn handle_action_should_handle_create_epic() {
+        
+    }
 }
