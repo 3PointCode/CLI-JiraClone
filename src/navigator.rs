@@ -70,7 +70,7 @@ impl Navigator {
                 self.pages.clear()
             },
         }
-        
+
         Ok(())
     }
 
@@ -80,5 +80,24 @@ impl Navigator {
 
     fn set_prompts(&mut self, prompts: Prompts) {
         self.prompts = prompts;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{data_base::test_utils::MockDatabase, models::{Epic, Status, Story}};
+    use super::*;
+
+    #[test]
+    fn should_start_on_home_page() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let nav = Navigator::new(db);
+
+        assert_eq!(nav.get_page_count(), 1);
+
+        let current_page = nav.get_current_page().unwrap();
+        let home_page = current_page.as_any().downcast_ref::<HomePage>();
+
+        assert_eq!(home_page.is_some(), true);
     }
 }
