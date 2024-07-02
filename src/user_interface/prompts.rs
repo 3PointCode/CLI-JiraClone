@@ -74,3 +74,31 @@ fn delete_story_prompt() -> bool {
 
     false
 }
+
+fn update_status_prompt() -> Option<Status> {
+    println!("----------------------------");
+    println!("New Status (1 - OPEN, 2 - IN PROGRESS, 3 - RESOLVED, 4 - CLOSED): ");
+
+    let status = get_user_input();
+    let status = status.trim().parse::<u8>();
+
+    if let Ok(status) = status {
+        match status {
+            1 => {
+                return Some(Status::Open);
+            }
+            2 => {
+                return Some(Status::InProgress);
+            }
+            3 => {
+                return Some(Status::Resolved);
+            }
+            4 => {
+                return Some(Status::Closed);
+            }
+            _ => return None
+        }
+    }
+
+    None
+}
