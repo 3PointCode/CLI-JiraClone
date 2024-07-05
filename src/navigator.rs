@@ -219,4 +219,20 @@ mod tests {
         assert_eq!(story.name, "name".to_owned());
         assert_eq!(story.description, "description".to_owned());
     }
+
+    #[test]
+    fn handle_action_should_handle_update_story() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+        let story_id = db.create_story(Story::new("".to_owned(), "".to_owned()), epic_id).unwrap();
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.update_status = Box::new(|| Some(Status::InProgress));
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::UpdateStoryStatus { story_id }).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.stories.get(&story_id).unwrap().status, Status::InProgress);
+    }
 }
