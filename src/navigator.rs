@@ -1,4 +1,4 @@
-use crate::{data_base::JiraDatabase, models::{Action, Status}, user_interface::{EpicDetail, HomePage, Page, Prompts, StoryDetail}};
+use crate::{data_base::JiraDatabase, models::Action, user_interface::{EpicDetail, HomePage, Page, Prompts, StoryDetail}};
 use std::rc::Rc;
 use anyhow::{anyhow, Result, Context, Ok};
 
