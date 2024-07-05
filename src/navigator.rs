@@ -217,6 +217,6 @@ mod tests {
 
         let story = db_state.stories.into_iter().next().unwrap().1;
         assert_eq!(story.name, "name".to_owned());
-        assert_eq!(story.description, "descri[tion".to_owned());
+        assert_eq!(story.description, "description".to_owned());
     }
 }
