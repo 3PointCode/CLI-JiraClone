@@ -200,4 +200,23 @@ mod tests {
         let db_state = db.read_db().unwrap();
         assert_eq!(db_state.epics.len(), 0);
     }
+
+    #[test]
+    fn handle_action_should_handle_create_story() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.create_story = Box::new(|| Story::new("name".to_owned(), "description".to_owned()));
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::CreateStory { epic_id: epic_id }).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.stories.len(), 1);
+
+        let story = db_state.stories.into_iter().next().unwrap().1;
+        assert_eq!(story.name, "name".to_owned());
+        assert_eq!(story.description, "descri[tion".to_owned());
+    }
 }
