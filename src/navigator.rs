@@ -235,4 +235,20 @@ mod tests {
         let db_state = db.read_db().unwrap();
         assert_eq!(db_state.stories.get(&story_id).unwrap().status, Status::InProgress);
     }
+
+    #[test]
+    fn handle_action_should_handle_delete_story() {
+        let db = Rc::new(JiraDatabase { database: Box::new(MockDatabase::new()) });
+        let epic_id = db.create_epic(Epic::new("".to_owned(), "".to_owned())).unwrap();
+        let story_id = db.create_story(Story::new("".to_owned(), "".to_owned()), epic_id).unwrap();
+        let mut nav = Navigator::new(Rc::clone(&db));
+        let mut prompts = Prompts::new();
+
+        prompts.delete_story = Box::new(|| true);
+        nav.set_prompts(prompts);
+        nav.handle_action(Action::DeleteStory { epic_id, story_id }).unwrap();
+
+        let db_state = db.read_db().unwrap();
+        assert_eq!(db_state.stories.len(), 0);
+    }
 }
